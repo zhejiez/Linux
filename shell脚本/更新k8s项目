@@ -1,0 +1,9 @@
+#!/bin/sh
+x=`date "+%m%d"`
+y=`date "+%k%M"`
+cd /root/dscp
+docker build -t=dscp-$x:$y .
+kubectl set image deployment dscp-test dscp=dscp-$x:$y
+#自动上传registry
+docker tag dscp:dscp-$y 192.168.1.122:5000/dscp-$y:dscp-$y
+docker push 192.168.1.122:5000/dscp-$y:dscp-$y

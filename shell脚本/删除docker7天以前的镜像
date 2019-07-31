@@ -1,0 +1,12 @@
+#删除7天以前的镜像
+m=`date -d '''7 days ago''' "+%m%d"`
+z=`docker images --filter=reference='dscp*' --format "{{.ID}} {{.Repository}}"| awk '{print $2}'|awk -F [-] '{print $2}'`
+for i in $z
+do
+    if [ $i -gt $m ]; then
+        echo "不需要删除"
+    else
+        echo "超过7天删除$z"
+        docker rmi dscp-$z
+    fi
+done

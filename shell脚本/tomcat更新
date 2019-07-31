@@ -1,0 +1,26 @@
+#tomcat增量更新脚本
+#!	/bin/bash
+sh tomcat/bin/shutdown.sh
+sleep 10
+PID=`ps -ef |grep /home/web/tomcat/conf |grep -v grep | awk '{print $2}'`
+sleep 7
+if [ -z "$PID" ];then
+    echo "进程不存在"
+else
+    echo "进程存在 杀死进程PID$PID"
+    kill -9 $PID
+fi
+tar -xvf sc.tar&&mv sc/* wj
+for file in `ls /home/web/wj`;do
+  q=`find /home/web/tomcat/webapps/ROOT -name $file`
+  w=`(echo $q | grep "$file")`
+  if [[ "$w" != "" ]]; then
+  \cp -rf wj/$file $q
+  echo
+  scp -r /home/web/wj/$file web@47.94.168.163:/home/web/wj
+  rm -rf /home/web/wj/$file
+  else
+  mv wj/$file sc
+  fi
+done
+sh tomcat/bin/startup.sh

@@ -1,0 +1,8 @@
+#/bin/bash
+PID=`ps -ef |grep /home/web/tomcat/conf |grep -v grep | awk '{print $2}'`
+if [ -z "$PID" ];then # 这里判断TOMCAT进程是否存在
+echo "进程不存在 发送邮件"
+sh /home/web/mailx.sh 121485915@qq.com "服务启动失败" "服务启动失败"
+else
+echo "进程存在"
+fi

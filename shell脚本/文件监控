@@ -1,0 +1,21 @@
+#/bin/bash
+#文件在不在
+WJ="tomcat/webapps/tax366.war"
+if [ -f "$WJ" ]
+then
+echo "$WJ 存在."
+else
+echo "$file 不存在."
+sh /home/web/mailx.sh xxx@qq.com "没有war包" "没有war包"
+fi
+
+
+#文件超过10分钟没更新
+#/bin/bash
+tim=$(stat -c %y /opt/SpringCloud/app/b_dscp_service/nohup.out |awk -F [.] '{print $1}'|awk '{print $2}'|awk -F [:] '{print $1 $2}')
+da=$(date -d '''10 minute ago''' "+%k%M")
+if [ $da -le $tim ]; then
+    echo "正常"
+  else
+    echo "服务停止"
+fi
