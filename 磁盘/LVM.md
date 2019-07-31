@@ -209,7 +209,8 @@ lvextend -L +2G /dev/linuxrhel/mylv
   Logical volume linuxrhel/mylv successfully resized.  
 ```    
 3.査看扩充后LV大小    
-```lvdisplay  
+```
+lvdisplay  
   --- Logical volume ---  
   LV Path                /dev/linuxrhel/mylv  
   LV Name                mylv  
