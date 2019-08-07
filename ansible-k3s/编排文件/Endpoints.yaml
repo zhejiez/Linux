@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: mysql-service       #名字
+subsets:
+  - addresses:
+    - ip: 192.168.1.111     #要访问外网的ip
+    ports:
+    - port: 4408            #外网端口
+      protocol: TCP
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service       #名字
+spec:
+  ports:
+  - port: 4408              #容器间连接的端口
+    targetPort: 4408
+    protocol: TCP

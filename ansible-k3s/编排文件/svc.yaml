@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: acc-svc
+  labels:
+    app: acc
+spec:
+  type: NodePort      #这里代表是NodePort类型的
+  ports:
+  - port: 80          #svc对容器内部开放端口,访问80端口会acc容器跳到18967端口
+    targetPort: 18967  #端口一定要和pod暴露出来的端口对应
+    protocol: TCP
+    nodePort: 30001   #容器外部访问端口
+  selector:
+    app: acc          #这里选择器一定要选择容器的标签，之前写name:kube-node是错的。

@@ -1,0 +1,5 @@
+[master]
+127.0.0.1  ansible_ssh_user="root" ansible_ssh_pass="qwe" ansible_ssh_port=22
+[node]
+192.168.1.12 ansible_ssh_user="root" ansible_ssh_pass="qweasd" ansible_ssh_port=22
+[add_node]

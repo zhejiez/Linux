@@ -1,0 +1,48 @@
+apiVersion: extensions/v1beta1   #当前格式的版本
+kind: Deployment                 #当前创建资源的类型，Deployment
+metadata:                        #当前资源的元数据
+  name: acc               #当前资源的名字 是元数据必须的项
+spec:                            #是当前Deployment的规格说明
+
+  replicas: 3                     #指当前创建的副本数量 默认不填 默认值就为‘1’
+  minReadySeconds: 30 #滚动升级时，容器准备就绪时间最少为30s
+  strategy:
+    rollingUpdate: #由于replicas为3,则整个升级,pod个数在2-4个之间
+      maxSurge: 1 #滚动升级时会先启动3个pod
+      maxUnavailable: 1 #滚动升级时允许的最大Unavailable的pod个数
+  template:                      #定义pod的模板
+    metadata:                    #当前pod的元数据
+      labels:                    #标签,这个要与svc的一样
+        app: acc
+    spec:                        #当前pod的规格说明
+      env:                   #环境变量
+      - name: JAVA_HOME                         
+        value: /jdk8
+      - name: PATH
+        value: $JAVA_HOME/bin:$PATH
+      - name: CLASSPATH
+        value: $JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+      hostAliases:         #hosts
+      - ip: "mongoip"
+        hostnames:
+        - "mongo.jxd"
+      containers:                #容器
+      - name: acc              #是容器的名字
+        image: acc:1      #镜像 镜像的名字和版本
+        imagePullPolicy: Never    #只用本地镜像
+        resources:
+          requests:
+            cpu: 0.2         #cpu最低200微核
+            memory: 200Mi         #内存最低是200M
+          limits:
+            cpu: 0.5                     #cpu最大是500微核
+            memory: 500Mi         #内存最低是200M
+      livenessProbe:
+      tcpSocket:
+        port: 8080
+        initialDelaySeconds: 60 #启动后延时多久开始运行检测
+        timeoutSeconds: 5       #对容器健康检查探测等待响应的超时时间，单位秒，默认1秒
+        periodSeconds: 30    #对容器监控检查的定期探测时间设置，单位秒，默认10秒一次
+      ports:
+      - name: acc       #svc可以用这个名字
+        containerPort: 18967 #对svc暴露端口

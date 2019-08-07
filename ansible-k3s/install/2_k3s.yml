@@ -1,0 +1,60 @@
+- hosts: master,node
+  tasks:
+  - name: "拷贝秘钥"
+    authorized_key:
+      user: root
+      key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
+  - name: "添加hosts"
+    shell: echo $(hostname -I | awk '{print $1}') $(hostname) >> /etc/hosts
+  - name: "关闭selinux"
+    shell: sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/sysconfig/selinux
+  - name: "拷贝k3s执行文件"
+    copy:
+      src=/opt/k3s/str/k3s
+      dest=/usr/local/bin/k3s
+  - name: "添加执行权限"
+    shell: chmod +x /usr/local/bin/k3s
+  - name: "关闭防火墙"
+    service: name=firewalld enabled=no daemon_reload=no state=stopped
+  - name: "yum安装环境"
+    yum: name=yum-utils,device-mapper-persistent-data,lvm2 state=installed
+  - name: "使用阿里源"
+    shell: yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+  - name: "yum安装docker"
+    yum: name=docker-ce state=installed
+  - name: "启动docker"
+    service: name=docker enabled=yes daemon_reload=yes state=restarted
+
+- hosts: master
+  tasks:
+  - name: "加载pause镜像"
+    shell: docker load -i /opt/k3s/str/pause.tar
+  - name: "启动k3s"
+    shell: cat /opt/k3s/str/k3s.sh |INSTALL_K3S_EXEC="--docker --no-deploy traefik" sh -
+  - name: "修改配置文件"
+    shell: sed -i "s/主节点ip/$(hostname -I | awk '{print $1}')/g" /opt/k3s/str/node.sh
+  - name: "修改主节点key"
+    shell: sed -i "s/k3s_token/$(cat /var/lib/rancher/k3s/server/node-token)/g" /opt/k3s/str/node.sh
+
+- hosts: node
+  tasks:
+  - name: "创建k3s目录"
+    shell: mkdir /opt/k3s
+  - name: "拷贝文件"
+    copy:
+      src=/opt/k3s/str/pause.tar
+      dest=/opt/k3s/pause.tar
+  - name: "拷贝k3s执行文件"
+    copy:
+      src=/opt/k3s/str/k3s.sh
+      dest=/opt/k3s/k3s.sh
+  - name: "拷贝node文件"
+    copy:
+      src=/opt/k3s/str/node.sh
+      dest=/opt/k3s/node.sh
+  - name: "加载pause镜像"
+    shell: docker load -i /opt/k3s/pause.tar
+  - name: "k3s.sh添加权限"
+    shell: chmod +x /opt/k3s/node.sh 
+  - name: "node安装k3s"
+    shell: sh /opt/k3s/node.sh 
