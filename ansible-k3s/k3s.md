@@ -4,9 +4,10 @@
 ## 一,架构与文件讲解
 所有操作都在主节点:
 集群架构
-Master:192.168.1.191   node:192.168.1.12 192.168.1.231
-master目录结构:
-[root@c8o k3s]# pwd  
+Master:192.168.1.191   node:192.168.1.12 192.168.1.231  
+master目录结构:  
+```
+pwd  
 /opt/k3s  
 ├── install  
 │   ├── 1_master.sh  #安装准备脚本  
@@ -19,6 +20,7 @@ master目录结构:
     ├── node.sh         #node节点运行k3s脚本requirements.txt  
     ├── requirements.txt   #pip安装ansible  
     └── pause.tar       #pause:3.1  没这个会一直停在拉取镜像阶段  
+```
 hosts文件,因为我的节点有点少,并且密码不一样,就这样写了,后续添加有点麻烦,可以添加个组变量,,但是需要用户名密码一样
 cat /opt/k3s/str/ansible/hosts
 ```
