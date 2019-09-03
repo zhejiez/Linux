@@ -6,19 +6,19 @@
 集群架构
 Master:192.168.1.191   node:192.168.1.12 192.168.1.231
 master目录结构:
-[root@c8o k3s]# pwd
-/opt/k3s
-├── install
-│   ├── 1_master.sh  #安装准备脚本
-│   └── 2_k3s.yml     #部署k3s脚本
-└── str
-    ├── ansible
-    │   └── hosts        #ansible hosts文件
-    ├── k3s                #k3s二进制文件
-    ├── k3s.sh           #k3s安装脚本
-    ├── node.sh         #node节点运行k3s脚本requirements.txt
-    ├── requirements.txt   #pip安装ansible
-    └── pause.tar       #pause:3.1  没这个会一直停在拉取镜像阶段,下面会有错误截图
+[root@c8o k3s]# pwd  
+/opt/k3s  
+├── install  
+│   ├── 1_master.sh  #安装准备脚本  
+│   └── 2_k3s.yml     #部署k3s脚本  
+└── str  
+    ├── ansible  
+    │   └── hosts        #ansible hosts文件  
+    ├── k3s                #k3s二进制文件  
+    ├── k3s.sh           #k3s安装脚本  
+    ├── node.sh         #node节点运行k3s脚本requirements.txt  
+    ├── requirements.txt   #pip安装ansible  
+    └── pause.tar       #pause:3.1  没这个会一直停在拉取镜像阶段  
 hosts文件,因为我的节点有点少,并且密码不一样,就这样写了,后续添加有点麻烦,可以添加个组变量,,但是需要用户名密码一样
 cat /opt/k3s/str/ansible/hosts
 ```
